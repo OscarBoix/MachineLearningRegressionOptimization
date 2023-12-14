@@ -137,7 +137,7 @@ def k_fold_cross_validation(data, target, degree):
         test_data = data[test_index]
         test_target = target[test_index]
 
-        # Fit classifier
+        # Get the params
         param = regression(degree, train_data, train_target)
         # Predict labels
         predicted_targets = calculate_model_function(degree, test_data, param)
@@ -151,8 +151,11 @@ def k_fold_cross_validation(data, target, degree):
     return avg_accuracy
 
 
-def plot(target, predicted_target):
+def plot(target, predicted_target, title):
     plt.scatter(target, predicted_target)
+    plt.xlabel("Target value")
+    plt.ylabel("Predicted value")
+    plt.title(title)
     plt.show()
 
 
@@ -160,7 +163,7 @@ def main():
     data, target = input_data()
     quality_heat = []
     quality_cool = []
-    # result = regression(2, data, target[:, 0])
+
     for i in range(3):
         # Heating load
         quality_heat.append(k_fold_cross_validation(data, target[:, 0], i))
@@ -170,6 +173,7 @@ def main():
         quality_cool.append(k_fold_cross_validation(data, target[:, 1], i))
         print(quality_cool)
 
+    # Decide which degree is the most accurate, the degree with less difference
     degree_heat = quality_heat.index(min(quality_heat))
     degree_cool = quality_cool.index(min(quality_cool))
 
@@ -181,8 +185,9 @@ def main():
 
     # Plot the estimated loads against the true loads
     # for both the heating and the cooling case
-    plot(target[:, 0], predicted_targets_heat)
-    plot(target[:, 1], predicted_targets_cool)
+
+    plot(target[:, 0], predicted_targets_heat, "Heating loads regression")
+    plot(target[:, 1], predicted_targets_cool, "Cooling loads regression")
 
 
 main()
